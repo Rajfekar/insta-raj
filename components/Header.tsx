@@ -11,15 +11,25 @@ import {
   UserGroupIcon,
   HeartIcon,
 } from "@heroicons/react/24/outline"
+import { signIn, signOut, useSession } from "next-auth/react"
+import { useRouter } from "next/router"
+import { useRecoilState, useRecoilValue } from "recoil"
+import { modalState } from "../atoms/modalAtom"
 type Props = {}
 
 const Header = (props: Props) => {
+  const { data: session } = useSession()
+  const [open, setOpen] = useRecoilState(modalState)
+  // const open = useRecoilValue(modalState)
+  const router = useRouter()
   return (
     <div className="shadow-sm border-b bg-white sticky top-0 z-50">
       <div className="flex justify-between max-w-6xl mx-5 lg:mx-auto">
         {/* Left */}
         <div className="relative mt-2  w-24 hidden lg:inline-grid">
           <Image
+            className="cursor-pointer"
+            onClick={() => router.push("/")}
             src="/Instagram_logo.png"
             width={250}
             height={250}
@@ -29,6 +39,8 @@ const Header = (props: Props) => {
         </div>
         <div className="relative mt-2  w-10  lg:hidden flex-shrink-0 cursor-pointer">
           <Image
+            className="cursor-pointer"
+            onClick={() => router.push("/")}
             src="/insta-logo.png"
             width={250}
             height={250}
@@ -54,22 +66,33 @@ const Header = (props: Props) => {
         {/* Right */}
 
         <div className="flex items-center justify-end space-x-4">
-          <HomeIcon className="navBtn" />
+          <HomeIcon className="navBtn" onClick={() => router.push("/")} />
           <Bars3Icon className="h-7 w-10 md:hidden cursor-pointer " />
-          <div className="relative navBtn">
-            <PaperAirplaneIcon className="navBtn -rotate-45" />
-            <div className="absolute -top-1 -right-2 bg-red-500 rounded-full flex items-center justify-center animate-pulse text-white text-xs w-5">
-              3
-            </div>
-          </div>
-          <PlusCircleIcon className="navBtn" />
-          <UserGroupIcon className="navBtn" />
-          <HeartIcon className="navBtn" />
-          <img
-            src="/a2.jpeg"
-            alt="profile-pic"
-            className="h-10 rounded-full cursor-pointer navBtn"
-          />
+          {session ? (
+            <>
+              <div className="relative navBtn">
+                <PaperAirplaneIcon className="navBtn -rotate-45" />
+                <div className="absolute -top-1 -right-2 bg-red-500 rounded-full flex items-center justify-center animate-pulse text-white text-xs w-5">
+                  3
+                </div>
+              </div>
+              <PlusCircleIcon
+                className="navBtn"
+                onClick={() => setOpen(true)}
+              />
+              <UserGroupIcon className="navBtn" />
+              <HeartIcon className="navBtn" />
+              <img
+                src={session?.user?.image}
+                alt="profile-pic"
+                className="h-10 rounded-full cursor-pointer navBtn"
+              />
+            </>
+          ) : (
+            <button type="button" onClick={signIn}>
+              Sign In
+            </button>
+          )}
         </div>
       </div>
     </div>

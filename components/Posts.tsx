@@ -1,34 +1,38 @@
-import React from "react"
+import {
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+  limit,
+} from "firebase/firestore"
+import React, { useEffect, useState } from "react"
+import { db } from "../firebase"
 import Post from "./Post"
 
 type Props = {}
-var postuser = [
-  {
-    id: 123,
-    username: "rajfekar",
-    userImg: "/a2.jpeg",
-    img: "hello",
-    caption: "helo world",
-  },
-  {
-    id: 124,
-    username: "rajfekar",
-    userImg: "/a2.jpeg",
-    img: "hello",
-    caption: "helo world",
-  },
-]
+
 const Posts = (props: Props) => {
+  const q = query(collection(db, "posts"))
+  const [posts, setPosts] = useState([])
+  useEffect(
+    () =>
+      onSnapshot(q, (snapshot) => {
+        // console.log(snapshot.docs)
+        setPosts(snapshot.docs)
+      }),
+    [db]
+  )
+
   return (
     <div>
-      {postuser.map((val, i) => (
+      {posts.map((post, i) => (
         <Post
           key={i}
-          id={val.id}
-          username={val.username}
-          userImg={val.userImg}
-          img={val.img}
-          caption={val.caption}
+          id={post.id}
+          username={post.data().username}
+          userImg={post.data().profileImg}
+          img={post.data().image}
+          caption={post.data().caption}
         />
       ))}
     </div>

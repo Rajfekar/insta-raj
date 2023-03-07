@@ -1,12 +1,15 @@
+import { signOut, useSession } from "next-auth/react"
 import React from "react"
 
 type Props = {}
 
 const MiniProfile = (props: Props) => {
+  const { data: session } = useSession()
+
   return (
     <div className="flex items-center justify-between mt-14 ml-10">
       <img
-        src="/a2.jpeg"
+        src={session?.user?.image}
         alt="profile"
         className="rounded-full border p-[2px] w-16 h-16  "
       />
@@ -14,7 +17,9 @@ const MiniProfile = (props: Props) => {
         <h2 className="font-bold">rajfekar</h2>
         <h3 className="text-sm text-gray-400">Welcome to Instagram2.0</h3>
       </div>
-      <button className="text-blue-400 text-sm">Sign Out</button>
+      <button type="button" onClick={signOut} className="text-blue-400 text-sm">
+        Sign Out
+      </button>
     </div>
   )
 }
